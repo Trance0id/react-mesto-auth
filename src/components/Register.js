@@ -1,12 +1,40 @@
 import React from "react";
 import useValidation from "../hooks/useValidation.js";
+import * as auth from "../utils/auth.js";
+import { useNavigate } from "react-router-dom";
 
 function Register({ onSubmit, formIsLoading }) {
   const validation = useValidation();
+
+  const [formValue, setFormValue] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormValue({
+      ...formValue,
+      [name]: value,
+    });
+
+    validation.handleChange(e);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formValue.password === formValue.confirmPassword) {
+      auth.register(formValue).then(() => {
+        navigate("/sign-in", { replace: true });
+      });
+    }
+  };
   return (
     <div className="popup__container popup__container_type_auth">
       <h3 className="popup__heading popup__heading_type_auth">Регистрация</h3>
-      <form name="login" className="popup__form" onSubmit={onSubmit}>
+      <form name="register" className="popup__form" onSubmit={handleSubmit}>
         <input
           type="email"
           className="popup__input popup__input_env_auth"
@@ -16,8 +44,8 @@ function Register({ onSubmit, formIsLoading }) {
           minLength="2"
           maxLength="30"
           autoComplete="off"
-          // value={validation.inputValues.name || ""}
-          // onChange={validation.onInputChange}
+          value={formValue.email || ""}
+          onChange={handleChange}
         />
         <div className="popup__error">{validation.errors.name}</div>
         <input
@@ -29,8 +57,8 @@ function Register({ onSubmit, formIsLoading }) {
           autoComplete="off"
           minLength="4"
           maxLength="16"
-          // value={validation.inputValues.link || ""}
-          // onChange={validation.onInputChange}
+          value={formValue.password || ""}
+          onChange={handleChange}
         />
         <div className="popup__error">{validation.errors.link}</div>
         <button
