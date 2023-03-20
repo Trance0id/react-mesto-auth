@@ -139,10 +139,23 @@ function App() {
   function onLogin(formData) {
     auth
       .authorize(formData)
-      .then((data) => {
-        if (data.token) {
-          setLoggedIn(true);
-          navigate("/", { replace: true });
+      .then((res) => {
+        console.log(res);
+        if (res.token) {
+          localStorage.setItem("jwt", res.token);
+          console.log(`token from loca: ${localStorage.getItem("jwt")}`);
+          auth.checkToken(res.token).then((res) => {
+            console.log("I am token check", res);
+            if (res.data.email) {
+              setHeaderContent({
+                onClick: onLogOut,
+                email: res.data.email,
+                buttonText: "Выйти",
+              });
+              setLoggedIn(true);
+              navigate("/", { replace: true });
+            }
+          });
         }
       })
       .catch((err) => console.log(err));
@@ -212,15 +225,19 @@ function App() {
 
   React.useEffect(addKeyListener, []);
 
-  const jwt = localStorage.getItem("jwt");
-
   React.useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
     auth
       .checkToken(jwt)
       .then((res) => {
-        if (res.email) {
+        if (res.data.email) {
+          setHeaderContent({
+            onClick: onLogOut,
+            email: res.data.email,
+            buttonText: "Выйти",
+          });
           setLoggedIn(true);
-          setHeaderContent({ email: res.email, buttonText: "Выйти" });
+          navigate("/", { replace: true });
         }
       })
       .catch((err) => {
@@ -259,7 +276,12 @@ function App() {
               />
             }
           />
-          <Route path="/sign-in" element={<Login handleLogin={onLogin} />} />
+          <Route
+            path="/sign-in"
+            element={
+              <Login formIsLoading={formIsLoading} handleLogin={onLogin} />
+            }
+          />
         </Routes>
         <Footer />
 

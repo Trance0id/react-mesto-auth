@@ -1,7 +1,5 @@
 import React from "react";
 import useValidation from "../hooks/useValidation.js";
-import * as auth from "../utils/auth.js";
-import { useNavigate } from "react-router-dom";
 
 function Login({ formIsLoading, handleLogin }) {
   const validation = useValidation();
@@ -10,8 +8,6 @@ function Login({ formIsLoading, handleLogin }) {
     email: "",
     password: "",
   });
-
-  // const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,9 +21,6 @@ function Login({ formIsLoading, handleLogin }) {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formValue.email || !formValue.password) {
-      return;
-    }
     handleLogin(formValue);
     setFormValue({ email: "", password: "" });
   };

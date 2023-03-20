@@ -1,14 +1,13 @@
 import React from "react";
 import useValidation from "../hooks/useValidation.js";
-import * as auth from "../utils/auth.js";
 import { Link } from "react-router-dom";
 
 function Register({ formIsLoading, handleRegister }) {
   const validation = useValidation();
 
   const [formValue, setFormValue] = React.useState({
-    password: "",
     email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -24,10 +23,8 @@ function Register({ formIsLoading, handleRegister }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formValue.email || !formValue.password) {
-      return;
-    }
     handleRegister(formValue);
+    setFormValue({ email: "", password: "" });
   };
 
   return (
