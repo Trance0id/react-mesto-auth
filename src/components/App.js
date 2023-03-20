@@ -16,6 +16,7 @@ import Register from "./Register.js";
 import InfoTooltip from "./InfoTooltip.js";
 import logoSuccess from "../images/logo/logo-reg-success.svg";
 import logoFail from "../images/logo/logo-reg-fail.svg";
+import * as auth from "../utils/auth.js";
 
 function App() {
   function handleEditAvatarClick() {
@@ -35,6 +36,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsConfirmDeletionPopupOpen(false);
+    setIsInfoTolltipOpen(false);
     setSelectedCard({});
   }
 
@@ -131,8 +133,35 @@ function App() {
       });
   }
 
-  function handleLogin() {}
+  function onLogin(formData) {
+    auth
+      .authorize(formData)
+      .then((data) => {
+        if (data.token) {
+          setLoggedIn(true);
+          navigate("/", { replace: true });
+        }
+      })
+      .catch((err) => console.log(err));
+  }
 
+  function onRegister(formData) {
+    auth
+      .register(formData)
+      .then(() => {
+        navigate("/sign-in", { replace: true });
+        setRegisterSuccess(true);
+        setIsInfoTolltipOpen(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        setRegisterSuccess(false);
+        setIsInfoTolltipOpen(true);
+      });
+  }
+
+  const [isInfoTooltipOpen, setIsInfoTolltipOpen] = React.useState(false);
+  const [registerSuccess, setRegisterSuccess] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
@@ -146,6 +175,7 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [formIsLoading, setFormIsLoading] = React.useState(false);
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
@@ -177,7 +207,7 @@ function App() {
         <Header />
         <Routes>
           <Route
-            path="/"
+            path="*"
             element={
               <ProtectedRoute
                 component={Main}
@@ -192,11 +222,11 @@ function App() {
               />
             }
           />
-          <Route path="/sign-up" element={<Register />} />
           <Route
-            path="/sign-in"
-            element={<Login handleLogin={handleLogin} />}
+            path="/sign-up"
+            element={<Register handleRegister={onRegister} />}
           />
+          <Route path="/sign-in" element={<Login handleLogin={onLogin} />} />
         </Routes>
         <Footer />
 
@@ -232,12 +262,9 @@ function App() {
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
         <InfoTooltip
-          isOpen={false}
+          isOpen={isInfoTooltipOpen}
           onClose={closeAllPopups}
-          title="Вы успешно зарегистрироваись!"
-          // title="Что-то пошло не так! Попробуйте ещё раз."
-          // picture={logoFail}
-          picture={logoSuccess}
+          regSucceed={registerSuccess}
         />
       </CurrentUserContext.Provider>
     </div>

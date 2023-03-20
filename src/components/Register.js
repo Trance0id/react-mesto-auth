@@ -1,17 +1,15 @@
 import React from "react";
 import useValidation from "../hooks/useValidation.js";
 import * as auth from "../utils/auth.js";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-function Register({ onSubmit, formIsLoading }) {
+function Register({ onSubmit, formIsLoading, handleRegister }) {
   const validation = useValidation();
 
   const [formValue, setFormValue] = React.useState({
     email: "",
     password: "",
   });
-
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,16 +19,17 @@ function Register({ onSubmit, formIsLoading }) {
       [name]: value,
     });
 
-    validation.handleChange(e);
+    validation.onInputChange(e);
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formValue.password === formValue.confirmPassword) {
-      auth.register(formValue).then(() => {
-        navigate("/sign-in", { replace: true });
-      });
+    if (!formValue.email || !formValue.password) {
+      return;
     }
+    handleRegister(formValue);
   };
+
   return (
     <div className="popup__container popup__container_type_auth">
       <h3 className="popup__heading popup__heading_type_auth">Регистрация</h3>
@@ -47,7 +46,7 @@ function Register({ onSubmit, formIsLoading }) {
           value={formValue.email || ""}
           onChange={handleChange}
         />
-        <div className="popup__error">{validation.errors.name}</div>
+        <div className="popup__error">{validation.errors.email}</div>
         <input
           type="password"
           className="popup__input popup__input_env_auth"
@@ -60,7 +59,7 @@ function Register({ onSubmit, formIsLoading }) {
           value={formValue.password || ""}
           onChange={handleChange}
         />
-        <div className="popup__error">{validation.errors.link}</div>
+        <div className="popup__error">{validation.errors.email}</div>
         <button
           type="submit"
           className={`button popup__button popup__button_env_auth ${
@@ -71,9 +70,9 @@ function Register({ onSubmit, formIsLoading }) {
           {formIsLoading ? "Подождите..." : "Зарегистрироваться"}
         </button>
       </form>
-      <a href="#" className="popup__bottom-link">
+      <Link to="/sign-in" className="popup__bottom-link">
         Уже зарегистрированы? Войти
-      </a>
+      </Link>
     </div>
   );
 }

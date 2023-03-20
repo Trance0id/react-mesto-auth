@@ -3,7 +3,7 @@ import useValidation from "../hooks/useValidation.js";
 import * as auth from "../utils/auth.js";
 import { useNavigate } from "react-router-dom";
 
-function Login({ onSubmit, formIsLoading, handleLogin }) {
+function Login({ formIsLoading, handleLogin }) {
   const validation = useValidation();
 
   const [formValue, setFormValue] = React.useState({
@@ -11,7 +11,7 @@ function Login({ onSubmit, formIsLoading, handleLogin }) {
     password: "",
   });
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,23 +21,15 @@ function Login({ onSubmit, formIsLoading, handleLogin }) {
       [name]: value,
     });
 
-    validation.handleChange(e);
+    validation.onInputChange(e);
   };
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formValue.email || !formValue.password) {
       return;
     }
-    auth
-      .authorize(formValue)
-      .then((data) => {
-        if (data.token) {
-          setFormValue({ email: "", password: "" });
-          handleLogin();
-          navigate("/", { replace: true });
-        }
-      })
-      .catch((err) => console.log(err));
+    handleLogin(formValue);
+    setFormValue({ email: "", password: "" });
   };
   return (
     <div className="popup__container popup__container_type_auth">
@@ -55,7 +47,7 @@ function Login({ onSubmit, formIsLoading, handleLogin }) {
           value={formValue.email || ""}
           onChange={handleChange}
         />
-        <div className="popup__error">{validation.errors.name}</div>
+        <div className="popup__error">{validation.errors.email}</div>
         <input
           type="password"
           className="popup__input popup__input_env_auth"
@@ -68,7 +60,7 @@ function Login({ onSubmit, formIsLoading, handleLogin }) {
           value={formValue.password || ""}
           onChange={handleChange}
         />
-        <div className="popup__error">{validation.errors.link}</div>
+        <div className="popup__error">{validation.errors.password}</div>
         <button
           type="submit"
           className={`button popup__button popup__button_env_auth ${

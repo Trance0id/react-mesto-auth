@@ -1,6 +1,8 @@
 import React from "react";
+import regOkLogo from "../images/logo/logo-reg-success.svg";
+import regFailLogo from "../images/logo/logo-reg-fail.svg";
 
-function InfoTooltip({ isOpen, onClose, title, picture }) {
+function InfoTooltip({ isOpen, onClose, regSucceed }) {
   return (
     <div
       className={`popup popup_type_info ${isOpen && "popup_opened"}`}
@@ -17,10 +19,16 @@ function InfoTooltip({ isOpen, onClose, title, picture }) {
           onClick={onClose}
         />
         <div
-          style={{ backgroundImage: `url(${picture})` }}
+          style={{
+            backgroundImage: `url(${regSucceed ? regOkLogo : regFailLogo})`,
+          }}
           className="popup__status-pic"
         />
-        <h3 className="popup__heading popup__heading_type_info">{title}</h3>
+        <h3 className="popup__heading popup__heading_type_info">
+          {regSucceed
+            ? "Вы успешно зарегистрировались!"
+            : "Что-то пошло не так! Попробуйте ещё раз."}
+        </h3>
       </div>
     </div>
   );
