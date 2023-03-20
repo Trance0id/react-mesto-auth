@@ -1,20 +1,15 @@
 export const BASE_URL = "https://auth.nomoreparties.co";
 
 export const register = (formData) => {
+  console.log(JSON.stringify(formData));
   return fetch(`${BASE_URL}/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
-  })
-    .then((res) => {
-      return res.json();
-    })
-    .then((res) => {
-      return res;
-    })
-    .catch((err) => console.log(err));
+  }).then((res) => res.json());
+  // .catch((err) => console.log(err));
 };
 export const authorize = (formData) => {
   return fetch(`${BASE_URL}/signin`, {

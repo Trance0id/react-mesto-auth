@@ -4,19 +4,17 @@ import Main from "./Main.js";
 import Footer from "./Footer.js";
 import ImagePopup from "./ImagePopup.js";
 import api from "../utils/api.js";
+import * as auth from "../utils/auth.js";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
 import AddPlacePopup from "./AddPlacePopup.js";
 import ConfirmDeletionPopup from "./ConfirmDeletionPopup.js";
-import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute.js";
 import Login from "./Login.js";
 import Register from "./Register.js";
 import InfoTooltip from "./InfoTooltip.js";
-import logoSuccess from "../images/logo/logo-reg-success.svg";
-import logoFail from "../images/logo/logo-reg-fail.svg";
-import * as auth from "../utils/auth.js";
 
 function App() {
   function handleEditAvatarClick() {
@@ -36,7 +34,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsConfirmDeletionPopupOpen(false);
-    setIsInfoTolltipOpen(false);
+    setIsInfoTooltipOpen(false);
     setSelectedCard({});
   }
 
@@ -133,6 +131,11 @@ function App() {
       });
   }
 
+  function onLogOut() {
+    setLoggedIn(false);
+    localStorage.removeItem("jwt");
+  }
+
   function onLogin(formData) {
     auth
       .authorize(formData)
@@ -146,22 +149,30 @@ function App() {
   }
 
   function onRegister(formData) {
+    console.log(formData);
     auth
       .register(formData)
       .then(() => {
         navigate("/sign-in", { replace: true });
         setRegisterSuccess(true);
-        setIsInfoTolltipOpen(true);
+        setIsInfoTooltipOpen(true);
       })
       .catch((err) => {
         console.log(err);
         setRegisterSuccess(false);
-        setIsInfoTolltipOpen(true);
+        setIsInfoTooltipOpen(true);
       });
   }
 
-  const [isInfoTooltipOpen, setIsInfoTolltipOpen] = React.useState(false);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [registerSuccess, setRegisterSuccess] = React.useState(false);
+  const [headerContent, setHeaderContent] = React.useState({
+    onClick: () => {
+      navigate("/sign-up", { replace: true });
+    },
+    email: "defEmail@yandex.ru",
+    buttonText: "Регистрация",
+  });
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
@@ -201,10 +212,27 @@ function App() {
 
   React.useEffect(addKeyListener, []);
 
+  const jwt = localStorage.getItem("jwt");
+
+  React.useEffect(() => {
+    auth
+      .checkToken(jwt)
+      .then((res) => {
+        if (res.email) {
+          setLoggedIn(true);
+          setHeaderContent({ email: res.email, buttonText: "Выйти" });
+        }
+      })
+      .catch((err) => {
+        console.log(`ошибка проверки токена: ${err}`);
+        alert(`Ошибка проверки токена! \n${err}`);
+      });
+  }, []);
+
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
+        <Header headerContent={headerContent} />
         <Routes>
           <Route
             path="*"
@@ -224,7 +252,12 @@ function App() {
           />
           <Route
             path="/sign-up"
-            element={<Register handleRegister={onRegister} />}
+            element={
+              <Register
+                formIsLoading={formIsLoading}
+                handleRegister={onRegister}
+              />
+            }
           />
           <Route path="/sign-in" element={<Login handleLogin={onLogin} />} />
         </Routes>

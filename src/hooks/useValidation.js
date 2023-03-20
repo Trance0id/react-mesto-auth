@@ -15,6 +15,7 @@ export default function useValidation() {
       [e.target.name]: e.target.validationMessage,
     }));
     setIsFormValid(e.target.closest("form").checkValidity());
+    console.log(isFormValid);
   }
 
   function resetForm(userInfo = {}) {

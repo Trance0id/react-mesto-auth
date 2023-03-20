@@ -66,7 +66,7 @@ function Login({ formIsLoading, handleLogin }) {
           className={`button popup__button popup__button_env_auth ${
             validation.isFormValid || true ? "" : "popup__button_disabled"
           }`}
-          disabled={!validation.isFormValid || true}
+          disabled={!validation.isFormValid}
         >
           {formIsLoading ? "Подождите..." : "Войти"}
         </button>

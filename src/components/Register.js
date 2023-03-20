@@ -3,12 +3,12 @@ import useValidation from "../hooks/useValidation.js";
 import * as auth from "../utils/auth.js";
 import { Link } from "react-router-dom";
 
-function Register({ onSubmit, formIsLoading, handleRegister }) {
+function Register({ formIsLoading, handleRegister }) {
   const validation = useValidation();
 
   const [formValue, setFormValue] = React.useState({
-    email: "",
     password: "",
+    email: "",
   });
 
   const handleChange = (e) => {
@@ -59,13 +59,13 @@ function Register({ onSubmit, formIsLoading, handleRegister }) {
           value={formValue.password || ""}
           onChange={handleChange}
         />
-        <div className="popup__error">{validation.errors.email}</div>
+        <div className="popup__error">{validation.errors.password}</div>
         <button
           type="submit"
           className={`button popup__button popup__button_env_auth ${
             validation.isFormValid || true ? "" : "popup__button_disabled"
           }`}
-          disabled={!validation.isFormValid || true}
+          disabled={!validation.isFormValid}
         >
           {formIsLoading ? "Подождите..." : "Зарегистрироваться"}
         </button>
