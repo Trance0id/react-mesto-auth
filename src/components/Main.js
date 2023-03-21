@@ -10,11 +10,8 @@ function Main({
   onCardClick,
   onCardLike,
   onCardDelete,
-  onRender,
 }) {
   const currentUser = React.useContext(CurrentUserContext);
-
-  // React.useEffect(onRender , []);
 
   return (
     <main className="content">

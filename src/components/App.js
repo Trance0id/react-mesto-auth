@@ -269,7 +269,6 @@ function App() {
                 onCardClick={handleCardClick}
                 onCardLike={handleCardLike}
                 onCardDelete={handleCardDeleteClick}
-                // onRender={setIsInfoTooltipOpen(true)}
               />
             }
           />

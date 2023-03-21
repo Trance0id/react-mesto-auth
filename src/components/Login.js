@@ -48,8 +48,8 @@ function Login({ formIsLoading, handleLogin }) {
           placeholder="Пароль"
           required
           autoComplete="off"
-          minLength="4"
-          maxLength="16"
+          minLength="8"
+          maxLength="20"
           value={formValue.password || ""}
           onChange={handleChange}
         />
