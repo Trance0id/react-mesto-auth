@@ -138,6 +138,7 @@ function App() {
   }
 
   function onLogin(formData) {
+    setFormIsLoading(true);
     auth
       .authorize(formData)
       .then((res) => {
@@ -148,17 +149,19 @@ function App() {
               setEmail(res.data.email);
               setLoggedIn(true);
               navigate("/", { replace: true });
-              // setIsInfoTooltipOpen(true);
               getInitialData();
             }
           });
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setFormIsLoading(false);
+      });
   }
 
   function onRegister(formData) {
-    console.log(formData);
+    setFormIsLoading(true);
     auth
       .register(formData)
       .then(() => {
@@ -170,6 +173,9 @@ function App() {
         console.log(err);
         setRegisterSuccess(false);
         setIsInfoTooltipOpen(true);
+      })
+      .finally(() => {
+        setFormIsLoading(false);
       });
   }
 

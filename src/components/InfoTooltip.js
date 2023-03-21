@@ -28,7 +28,7 @@ function InfoTooltip({ isOpen, onClose, regSucceed, loggedIn }) {
         />
         <h3 className="popup__heading popup__heading_type_info">
           {loggedIn
-            ? "Вы успешно вошли в аккаунт! Для выхода нажмите 'Выйти'"
+            ? "Вы успешно вошли на сайт! Для выхода нажмите Выйти"
             : regSucceed
             ? "Вы успешно зарегистрировались!"
             : "Что-то пошло не так! Попробуйте ещё раз."}

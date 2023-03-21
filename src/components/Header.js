@@ -1,5 +1,5 @@
 import logoMesto from "../images/logo/mesto-white.svg";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 function Header({ email, onLogOut }) {
   let path = useLocation().pathname;
@@ -32,9 +32,15 @@ function Header({ email, onLogOut }) {
       <img src={logoMesto} alt="Логотип Место" className="logo" />
       <p className="header__content">
         {email}
-        <Link to={linkTo} onClick={handleClick} className="header__button">
+        <NavLink
+          to={linkTo}
+          onClick={handleClick}
+          className={({ isActive }) =>
+            `${isActive && "header__link_active"} header__link`
+          }
+        >
           {text}
-        </Link>
+        </NavLink>
       </p>
     </header>
   );
