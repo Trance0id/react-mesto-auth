@@ -36,7 +36,7 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, formIsLoading }) {
         required
         minLength="2"
         autoComplete="off"
-        value={validation.inputValues.avatar}
+        value={validation.inputValues.avatar || ""}
         onChange={validation.onInputChange}
       />
       <div className="popup__error">{validation.errors.avatar}</div>

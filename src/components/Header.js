@@ -1,19 +1,40 @@
 import logoMesto from "../images/logo/mesto-white.svg";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-function Header({ headerContent }) {
+function Header({ email, onLogOut }) {
+  let path = useLocation().pathname;
+
+  let text, linkTo, handleClick;
+
+  switch (path) {
+    case "/":
+      text = "Выйти";
+      linkTo = "/";
+      handleClick = (e) => {
+        e.preventDefault();
+        onLogOut();
+      };
+      break;
+    case "/sign-in":
+      text = "Регистрация";
+      linkTo = "/sign-up";
+      handleClick = null;
+      break;
+    case "/sign-up":
+      text = "Вход";
+      linkTo = "/sign-in";
+      handleClick = null;
+      break;
+  }
+
   return (
     <header className="header">
       <img src={logoMesto} alt="Логотип Место" className="logo" />
       <p className="header__content">
-        {headerContent.email}
-        <button
-          type="button"
-          onClick={headerContent.onClick}
-          className="header__button"
-        >
-          {headerContent.buttonText}
-        </button>
+        {email}
+        <Link to={linkTo} onClick={handleClick} className="header__button">
+          {text}
+        </Link>
       </p>
     </header>
   );

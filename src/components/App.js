@@ -134,20 +134,7 @@ function App() {
   function onLogOut() {
     setLoggedIn(false);
     localStorage.removeItem("jwt");
-    setHeaderContent({
-      onClick: () => {
-        navigate("/sign-up", { replace: true });
-        setHeaderContent({
-          onClick: () => {
-            navigate("/sign-in", { replace: true });
-          },
-          email: "",
-          buttonText: "Войти",
-        });
-      },
-      email: "",
-      buttonText: "Регистрация",
-    });
+    setEmail("");
   }
 
   function onLogin(formData) {
@@ -158,13 +145,11 @@ function App() {
           localStorage.setItem("jwt", res.token);
           auth.checkToken(res.token).then((res) => {
             if (res.data.email) {
-              setHeaderContent({
-                onClick: onLogOut,
-                email: res.data.email,
-                buttonText: "Выйти",
-              });
+              setEmail(res.data.email);
               setLoggedIn(true);
               navigate("/", { replace: true });
+              // setIsInfoTooltipOpen(true);
+              getInitialData();
             }
           });
         }
@@ -202,13 +187,7 @@ function App() {
 
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [registerSuccess, setRegisterSuccess] = React.useState(false);
-  const [headerContent, setHeaderContent] = React.useState({
-    onClick: () => {
-      navigate("/sign-up", { replace: true });
-    },
-    email: "",
-    buttonText: "Регистрация",
-  });
+  const [email, setEmail] = React.useState("");
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
@@ -255,13 +234,10 @@ function App() {
     auth
       .checkToken(jwt)
       .then((res) => {
-        setHeaderContent({
-          onClick: onLogOut,
-          email: res.data.email,
-          buttonText: "Выйти",
-        });
+        setEmail(res.data.email);
         setLoggedIn(true);
         navigate("/", { replace: true });
+        setIsInfoTooltipOpen(true);
         getInitialData();
       })
       .catch((err) => {
@@ -272,7 +248,7 @@ function App() {
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header headerContent={headerContent} />
+        <Header email={email} onLogOut={onLogOut} />
         <Routes>
           <Route
             path="*"
@@ -287,6 +263,7 @@ function App() {
                 onCardClick={handleCardClick}
                 onCardLike={handleCardLike}
                 onCardDelete={handleCardDeleteClick}
+                // onRender={setIsInfoTooltipOpen(true)}
               />
             }
           />
@@ -343,6 +320,7 @@ function App() {
           isOpen={isInfoTooltipOpen}
           onClose={closeAllPopups}
           regSucceed={registerSuccess}
+          loggedIn={loggedIn}
         />
       </CurrentUserContext.Provider>
     </div>
