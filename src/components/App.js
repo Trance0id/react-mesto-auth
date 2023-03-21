@@ -134,18 +134,29 @@ function App() {
   function onLogOut() {
     setLoggedIn(false);
     localStorage.removeItem("jwt");
+    setHeaderContent({
+      onClick: () => {
+        navigate("/sign-up", { replace: true });
+        setHeaderContent({
+          onClick: () => {
+            navigate("/sign-in", { replace: true });
+          },
+          email: "",
+          buttonText: "Войти",
+        });
+      },
+      email: "",
+      buttonText: "Регистрация",
+    });
   }
 
   function onLogin(formData) {
     auth
       .authorize(formData)
       .then((res) => {
-        console.log(res);
         if (res.token) {
           localStorage.setItem("jwt", res.token);
-          console.log(`token from loca: ${localStorage.getItem("jwt")}`);
           auth.checkToken(res.token).then((res) => {
-            console.log("I am token check", res);
             if (res.data.email) {
               setHeaderContent({
                 onClick: onLogOut,
@@ -177,13 +188,25 @@ function App() {
       });
   }
 
+  function getInitialData() {
+    Promise.all([api.getUserInfo(), api.getInitialCards()])
+      .then((results) => {
+        setCurrentUser(results[0]);
+        setCards(results[1]);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(`Не удалось получить ответ от сервера. \n${err}`);
+      });
+  }
+
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [registerSuccess, setRegisterSuccess] = React.useState(false);
   const [headerContent, setHeaderContent] = React.useState({
     onClick: () => {
       navigate("/sign-up", { replace: true });
     },
-    email: "defEmail@yandex.ru",
+    email: "",
     buttonText: "Регистрация",
   });
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -201,18 +224,6 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getInitialCards()])
-      .then((results) => {
-        setCurrentUser(results[0]);
-        setCards(results[1]);
-      })
-      .catch((err) => {
-        console.log(err);
-        alert(`Не удалось получить ответ от сервера. \n${err}`);
-      });
-  }, []);
-
   function handleKeyDown(e) {
     if (e.key === "Escape") {
       closeAllPopups();
@@ -220,29 +231,41 @@ function App() {
   }
 
   function addKeyListener() {
-    document.addEventListener("keydown", handleKeyDown);
+    if (
+      isInfoTooltipOpen ||
+      isEditProfilePopupOpen ||
+      isEditAvatarPopupOpen ||
+      isAddPlacePopupOpen ||
+      isConfirmDeletionPopupOpen
+    ) {
+      document.addEventListener("keydown", handleKeyDown);
+    } else document.removeEventListener("keydown", handleKeyDown);
   }
 
-  React.useEffect(addKeyListener, []);
+  React.useEffect(addKeyListener, [
+    isInfoTooltipOpen,
+    isEditProfilePopupOpen,
+    isEditAvatarPopupOpen,
+    isAddPlacePopupOpen,
+    isConfirmDeletionPopupOpen,
+  ]);
 
   React.useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     auth
       .checkToken(jwt)
       .then((res) => {
-        if (res.data.email) {
-          setHeaderContent({
-            onClick: onLogOut,
-            email: res.data.email,
-            buttonText: "Выйти",
-          });
-          setLoggedIn(true);
-          navigate("/", { replace: true });
-        }
+        setHeaderContent({
+          onClick: onLogOut,
+          email: res.data.email,
+          buttonText: "Выйти",
+        });
+        setLoggedIn(true);
+        navigate("/", { replace: true });
+        getInitialData();
       })
       .catch((err) => {
-        console.log(`ошибка проверки токена: ${err}`);
-        alert(`Ошибка проверки токена! \n${err}`);
+        console.log(err);
       });
   }, []);
 

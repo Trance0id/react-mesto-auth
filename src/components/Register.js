@@ -39,7 +39,7 @@ function Register({ formIsLoading, handleRegister }) {
           required
           minLength="2"
           maxLength="30"
-          autoComplete="off"
+          autoComplete="on"
           value={formValue.email || ""}
           onChange={handleChange}
         />

@@ -8,7 +8,13 @@ export const register = (formData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
-  }).then((res) => res.json());
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      return Promise.reject(`Ошибка авторизации! Статус: ${res.status}`);
+    }
+  });
 };
 
 export const authorize = (formData) => {
@@ -18,7 +24,13 @@ export const authorize = (formData) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
-  }).then((res) => res.json());
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      return Promise.reject(`Ошибка авторизации! Статус: ${res.status}`);
+    }
+  });
 };
 
 export const checkToken = (token) => {
@@ -28,5 +40,11 @@ export const checkToken = (token) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  }).then((res) => res.json());
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      return Promise.reject(`Ошибка авторизации! Статус: ${res.status}`);
+    }
+  });
 };
