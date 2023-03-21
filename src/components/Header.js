@@ -2,7 +2,7 @@ import logoMesto from "../images/logo/mesto-white.svg";
 import { NavLink, useLocation } from "react-router-dom";
 
 function Header({ email, onLogOut }) {
-  let path = useLocation().pathname;
+  const path = useLocation().pathname;
 
   let text, linkTo, handleClick;
 

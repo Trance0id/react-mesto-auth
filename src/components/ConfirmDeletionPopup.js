@@ -21,6 +21,7 @@ function ConfirmDeletionPopup({
       onSubmit={handleSubmit}
       formIsLoading={formIsLoading}
       submitButtonText="Да"
+      submitButtonValidity={true}
     />
   );
 }

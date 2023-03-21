@@ -144,14 +144,10 @@ function App() {
       .then((res) => {
         if (res.token) {
           localStorage.setItem("jwt", res.token);
-          auth.checkToken(res.token).then((res) => {
-            if (res.data.email) {
-              setEmail(res.data.email);
-              setLoggedIn(true);
-              navigate("/", { replace: true });
-              getInitialData();
-            }
-          });
+          setEmail(formData.email);
+          setLoggedIn(true);
+          navigate("/", { replace: true });
+          getInitialData();
         }
       })
       .catch((err) => console.log(err))
@@ -210,29 +206,39 @@ function App() {
   const navigate = useNavigate();
 
   function handleKeyDown(e) {
+    console.log(e.key);
     if (e.key === "Escape") {
       closeAllPopups();
     }
   }
 
   function addKeyListener() {
+    document.addEventListener("keydown", handleKeyDown);
+  }
+
+  function removeKeyListener() {
+    document.removeEventListener("keydown", handleKeyDown);
+  }
+
+  React.useEffect(() => {
     if (
       isInfoTooltipOpen ||
       isEditProfilePopupOpen ||
       isEditAvatarPopupOpen ||
       isAddPlacePopupOpen ||
-      isConfirmDeletionPopupOpen
+      isConfirmDeletionPopupOpen ||
+      selectedCard.name
     ) {
-      document.addEventListener("keydown", handleKeyDown);
-    } else document.removeEventListener("keydown", handleKeyDown);
-  }
-
-  React.useEffect(addKeyListener, [
+      addKeyListener();
+    }
+    return removeKeyListener;
+  }, [
     isInfoTooltipOpen,
     isEditProfilePopupOpen,
     isEditAvatarPopupOpen,
     isAddPlacePopupOpen,
     isConfirmDeletionPopupOpen,
+    selectedCard,
   ]);
 
   React.useEffect(() => {
