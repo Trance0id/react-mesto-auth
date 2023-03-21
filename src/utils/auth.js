@@ -12,7 +12,7 @@ export const register = (formData) => {
     if (res.ok) {
       return res.json();
     } else {
-      return Promise.reject(`Ошибка авторизации! Статус: ${res.status}`);
+      return Promise.reject(`Ошибка регистрации! Статус: ${res.status}`);
     }
   });
 };
@@ -44,7 +44,7 @@ export const checkToken = (token) => {
     if (res.ok) {
       return res.json();
     } else {
-      return Promise.reject(`Ошибка авторизации! Статус: ${res.status}`);
+      return Promise.reject(`Ошибка проверки токена! Статус: ${res.status}`);
     }
   });
 };
