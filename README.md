@@ -55,4 +55,4 @@
 **Деплой**
 
 Деплой проекта осуществляется при помощи webpack. На github pages попадает именно сборка из ветки gh-pages.
-[Ссылка на Github Pages](https://trance0id.github.io/mesto-react/)
+[Ссылка на Github Pages](https://trance0id.github.io/react-mesto-auth/)
